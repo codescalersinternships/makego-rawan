@@ -23,11 +23,6 @@ func PrintRules(rules []makego.Stage) {
 	}
 }
 func main() {
-	// makefile, err := makego.ParseMakefile("testdata/makefile")
-	// if err != nil {
-	// 	panic(err)
-	// }
-	// PrintRules(makefile.Stages)
 	err := makego.ExecuteMakefile("testdata/makefile")
 	if err != nil {
 		panic(err)
