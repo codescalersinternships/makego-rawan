@@ -2,13 +2,12 @@ package makego
 
 import (
 	"errors"
-	"fmt"
 	"os"
-	"path/filepath"
 	"strings"
 )
 
 var ErrCircularDependency = errors.New("circular dependency detected")
+var ErrInvalidMakefile = errors.New("invalid makefile format")
 
 type Stage struct {
 	Target       string
@@ -21,11 +20,6 @@ type Makefile struct {
 }
 
 func readMakefile(path string) (string, error) {
-	filename := filepath.Base(path)
-	if strings.ToLower(filename) != "makefile" {
-		return "", fmt.Errorf("the specified file is not a Makefile")
-	}
-
 	data, err := os.ReadFile(path)
 	if err != nil {
 		return "", err
@@ -41,8 +35,7 @@ func parseMakefile(path string) (*Makefile, error) {
 	}
 	lines := strings.Split(content, "\n")
 	var stages []Stage
-	for i, line := range lines {
-		// line = strings.TrimSpace(line)
+	for _, line := range lines {
 		if line == "" || strings.HasPrefix(line, "#") {
 			continue
 		}
@@ -50,7 +43,7 @@ func parseMakefile(path string) (*Makefile, error) {
 		if strings.Contains(line, ":") { // target line
 			parts := strings.Split(line, ":")
 			if len(parts) != 2 {
-				return nil, fmt.Errorf("syntax error on line %d: %s", i+1, line)
+				return nil, ErrInvalidMakefile
 			}
 
 			target := strings.TrimSpace(parts[0])
@@ -60,13 +53,13 @@ func parseMakefile(path string) (*Makefile, error) {
 
 		} else if strings.HasPrefix(line, "\t") { // command line
 			if len(stages) == 0 {
-				return nil, fmt.Errorf("command without target on line %d: %s", i+1, line)
+				return nil, ErrInvalidMakefile
 			}
 			command := strings.TrimSpace(line)
 			currStage := &stages[len(stages)-1]
 			currStage.Commands = append(currStage.Commands, command)
 		} else {
-			return nil, fmt.Errorf("unrecognized line format on line %d: %s", i+1, line)
+			return nil, ErrInvalidMakefile
 		}
 	}
 	return &Makefile{Stages: stages}, nil

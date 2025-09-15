@@ -1,0 +1,4 @@
+hello: hello1.txt : hello2.txt 
+	cat hello1.txt
+	cat hello2.txt
+	
