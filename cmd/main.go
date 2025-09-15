@@ -1,8 +1,8 @@
 package main
 
 import (
+	"flag"
 	"fmt"
-	"os"
 	"strings"
 
 	makego "github.com/codescalersinternships/makego-rawan/pkg"
@@ -24,15 +24,19 @@ func PrintRules(rules []makego.Stage) {
 	}
 }
 func main() {
-	args := os.Args[1:]
+	file := flag.String("f", "Makefile", "Path to the makefile")
+	flag.Parse()
+
+	args := flag.Args()
 
 	var targets []string
 	targets = nil
+
 	if len(args) > 0 {
 		targets = args[0:]
 	}
 
-	err := makego.ExecuteMakefile("testdata/makefile", targets)
+	err := makego.ExecuteMakefile(*file, targets)
 	if err != nil {
 		panic(err)
 	}
