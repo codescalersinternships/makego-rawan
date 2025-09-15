@@ -45,7 +45,7 @@ func TestDependencyResolver(t *testing.T) {
 	}
 	for _, tc := range testcases {
 		t.Run(tc.name, func(t *testing.T) {
-			ordered, err := dependencyResolver(tc.stages)
+			ordered, err := dependencyResolver(tc.stages, tc.stages[0].Target)
 			if err != tc.expectError {
 				t.Errorf("expected error: %v, got: %v", tc.expectError, err)
 			}

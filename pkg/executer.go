@@ -22,12 +22,22 @@ func ExecuteMakefile(path string) error {
 		return err
 	}
 
-	ordered, err := dependencyResolver(makefile.Stages)
+	ordered, err := dependencyResolver(makefile.Stages, makefile.Stages[0].Target)
 	if err != nil {
 		return err
 	}
 
-	for _, target := range ordered {
+	defaultTarget := makefile.Stages[0].Target
+	runTargets := []string{}
+
+	for _, t := range ordered { //run the first target and its dependencies only
+		runTargets = append(runTargets, t)
+		if t == defaultTarget {
+			break
+		}
+	}
+
+	for _, target := range runTargets {
 		stage := getStageByTarget(makefile.Stages, target)
 		if stage == nil {
 			continue

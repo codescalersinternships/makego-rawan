@@ -31,7 +31,7 @@ func dfs(node string, graph map[string][]string, visited map[string]bool, stack 
 	return nil
 }
 
-func dependencyResolver(stages []Stage) ([]string, error) {
+func dependencyResolver(stages []Stage, root string) ([]string, error) {
 	graph := buildGraph(stages)
 	visited := make(map[string]bool)
 	stack := make([]string, 0)
@@ -39,7 +39,7 @@ func dependencyResolver(stages []Stage) ([]string, error) {
 
 	for target := range graph {
 		if !visited[target] {
-			err := dfs(target, graph, visited, stack, &orderedTargets)
+			err := dfs(root, graph, visited, stack, &orderedTargets)
 			if err != nil {
 				return nil, err
 			}
