@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"slices"
 	"strings"
 )
 
@@ -35,53 +34,7 @@ func readMakefile(path string) (string, error) {
 	return string(data), nil
 }
 
-func buildGraph(stages []Stage) map[string][]string {
-	graph := make(map[string][]string)
-	for _, s := range stages {
-		graph[s.Target] = s.Dependencies
-	}
-	return graph
-}
-
-func dependencyResolver(stages []Stage) ([]string, error) {
-	graph := buildGraph(stages)
-	visited := make(map[string]bool)
-	stack := make([]string, 0)
-	orderedTargets:= make([]string,0)
-
-	for target := range graph {
-		if !visited[target] {
-			err := dfs(target, graph, visited, stack, &orderedTargets)
-			if err != nil {
-				return nil, err
-			}
-		}
-	}
-	return orderedTargets, nil
-}
-
-func dfs(node string, graph map[string][]string, visited map[string]bool, stack []string, orderedTargets *[]string) error {
-	if visited[node] {
-		return nil
-	}
-	if slices.Contains(stack, node) {
-		return ErrCircularDependency
-	}
-
-	stack = append(stack, node)
-
-	for _, dep := range graph[node] {
-		err := dfs(dep, graph, visited, stack, orderedTargets)
-		if err != nil {
-			return err
-		}
-	}
-	visited[node] = true
-	*orderedTargets = append(*orderedTargets, node)
-	return nil
-}
-
-func ParseMakefile(path string) (*Makefile, error) {
+func parseMakefile(path string) (*Makefile, error) {
 	content, err := readMakefile(path)
 	if err != nil {
 		return nil, err
@@ -117,20 +70,4 @@ func ParseMakefile(path string) (*Makefile, error) {
 		}
 	}
 	return &Makefile{Stages: stages}, nil
-}
-
-func ExecuteMakefile(path string) error {
-	makefile, err := ParseMakefile(path)
-	if err != nil {
-		return err
-	}
-
-	ordered, err := dependencyResolver(makefile.Stages)
-	if err != nil {
-		return err
-	}
-	fmt.Println("Execution order:", ordered)
-
-	return nil
-
 }
