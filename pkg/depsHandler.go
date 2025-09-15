@@ -10,22 +10,6 @@ func buildGraph(stages []Stage) map[string][]string {
 	return graph
 }
 
-func dependencyResolver(stages []Stage) ([]string, error) {
-	graph := buildGraph(stages)
-	visited := make(map[string]bool)
-	stack := make([]string, 0)
-	orderedTargets := make([]string, 0)
-
-	for target := range graph {
-		if !visited[target] {
-			err := dfs(target, graph, visited, stack, &orderedTargets)
-			if err != nil {
-				return nil, err
-			}
-		}
-	}
-	return orderedTargets, nil
-}
 func dfs(node string, graph map[string][]string, visited map[string]bool, stack []string, orderedTargets *[]string) error {
 	if visited[node] {
 		return nil
@@ -45,4 +29,21 @@ func dfs(node string, graph map[string][]string, visited map[string]bool, stack 
 	visited[node] = true
 	*orderedTargets = append(*orderedTargets, node)
 	return nil
+}
+
+func dependencyResolver(stages []Stage) ([]string, error) {
+	graph := buildGraph(stages)
+	visited := make(map[string]bool)
+	stack := make([]string, 0)
+	orderedTargets := make([]string, 0)
+
+	for target := range graph {
+		if !visited[target] {
+			err := dfs(target, graph, visited, stack, &orderedTargets)
+			if err != nil {
+				return nil, err
+			}
+		}
+	}
+	return orderedTargets, nil
 }
