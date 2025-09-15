@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"os"
 	"strings"
 
 	makego "github.com/codescalersinternships/makego-rawan/pkg"
@@ -23,7 +24,15 @@ func PrintRules(rules []makego.Stage) {
 	}
 }
 func main() {
-	err := makego.ExecuteMakefile("testdata/makefile")
+	args := os.Args[1:]
+
+	var targets []string
+	targets = nil
+	if len(args) > 0 {
+		targets = args[0:]
+	}
+
+	err := makego.ExecuteMakefile("testdata/makefile", targets)
 	if err != nil {
 		panic(err)
 	}
