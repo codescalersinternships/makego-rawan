@@ -20,7 +20,6 @@ func ExecuteMakefile(path string, targets []string) error {
 	if err != nil {
 		return err
 	}
-
 	defaultTarget := makefile.Stages[0].Target
 
 	if len(targets) == 0 {
@@ -52,5 +51,4 @@ func ExecuteMakefile(path string, targets []string) error {
 	}
 
 	return nil
-
 }
