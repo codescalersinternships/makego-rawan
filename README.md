@@ -9,6 +9,7 @@ This repository provides a Go-based tool to execute Makefile targets with suppor
 -   Ordered execution for dependent stages.
 -   Error handling through channels for safe concurrent execution.
 
+
 ## Installation
 
 1.  Clone this repository:
@@ -19,6 +20,19 @@ This repository provides a Go-based tool to execute Makefile targets with suppor
     ```
 
 ## Usage
+
+### Code Example 
+
+```go
+import makego "github.com/codescalersinternships/makego-rawan/pkg"
+
+func main() {
+	err := makego.ExecuteMakefile(path, targets)
+	if err != nil {
+		panic(err)
+	}
+}
+```
 
 ### Running a Makefile Target
 
